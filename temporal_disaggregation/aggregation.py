@@ -35,17 +35,22 @@ class TemporalAggregation:
         Returns:
             pd.DataFrame: Aggregated time series.
         """
-        df = df.copy()
-        df[time_col] = pd.to_datetime(df[time_col])
-        df.set_index(time_col, inplace=True)
+        try:
+            df = df.copy()
+            df[time_col] = pd.to_datetime(df[time_col])
+            df.set_index(time_col, inplace=True)
+            
+            if self.conversion == "sum":
+                aggregated = df[value_col].resample(freq).sum()
+            elif self.conversion == "average":
+                aggregated = df[value_col].resample(freq).mean()
+            elif self.conversion == "first":
+                aggregated = df[value_col].resample(freq).first()
+            elif self.conversion == "last":
+                aggregated = df[value_col].resample(freq).last()
+            
+            return aggregated.reset_index()
         
-        if self.conversion == "sum":
-            aggregated = df[value_col].resample(freq).sum()
-        elif self.conversion == "average":
-            aggregated = df[value_col].resample(freq).mean()
-        elif self.conversion == "first":
-            aggregated = df[value_col].resample(freq).first()
-        elif self.conversion == "last":
-            aggregated = df[value_col].resample(freq).last()
-        
-        return aggregated.reset_index()
+        except Exception as e:
+            print(f"⚠️ Error in aggregation: {e}")
+            return None
