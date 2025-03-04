@@ -20,7 +20,7 @@ class DataFrameProcessor:
         self.engine = engine  # File reading engine (can be None)
         self.df = None  # Initialize DataFrame as None
 
-    def import_excel(self, datetime_cols=None, datetime_format=None):
+    def import_excel(self, datetime_cols=None, datetime_format=None, return_df=True):
         """
         Imports an Excel file and stores it in a DataFrame.
         Optionally converts columns to datetime format with a specific format.
@@ -28,6 +28,7 @@ class DataFrameProcessor:
         Parameters:
             datetime_cols (list, optional): List of columns to convert to datetime format.
             datetime_format (str, optional): Date format (e.g., "%d/%m/%Y", "%Y-%m-%d").
+            return_df (bool,   optional): Bool to 
 
         Returns:
             pd.DataFrame: DataFrame with the imported data, or None if an error occurs.
@@ -51,8 +52,10 @@ class DataFrameProcessor:
             if datetime_cols:
                 self.convert_columns_to_datetime(datetime_cols, datetime_format)
 
-            print(f"✅ File '{self.file_path.name}' successfully imported.")  
-            return self.df  # Return the loaded DataFrame
+            print(f"File '{self.file_path.name}' successfully imported.")
+
+            if return_df == True:
+                return self.df  # Return the loaded DataFrame
 
         except ValueError:
             print(f"Error: The sheet '{self.sheet_name}' does not exist in the file '{self.file_path.name}'.")
@@ -76,9 +79,9 @@ class DataFrameProcessor:
                 if col in self.df.columns:
                     self.df[col] = pd.to_datetime(self.df[col], format=date_format, errors="coerce")
                     if date_format:
-                        print(f"📅 Column '{col}' converted to datetime format with the format '{date_format}'.")
+                        print(f"Column '{col}' converted to datetime format with the format '{date_format}'.")
                     else:
-                        print(f"📅 Column '{col}' converted to datetime format with automatic inference.")
+                        print(f"Column '{col}' converted to datetime format with automatic inference.")
                 else:
                     print(f"Warning: The column '{col}' does not exist in the DataFrame.")
         except Exception as e:
@@ -124,7 +127,7 @@ class DataFrameProcessor:
                 value_name=value_name_col  # Name of the column that will store the values
             )
 
-            print("🔄 Successful conversion to long format.")
+            print("Successful conversion to long format.")
             return df_long  # Return the DataFrame in long format
 
         except KeyError as e:
@@ -182,7 +185,7 @@ class TimeSeriesCompleter:
         try:
             self._create_full_index()
         except Exception as e:
-            print(f"🚨 Error while creating the full index: {e}")
+            print(f"Error while creating the full index: {e}")
             return self.df_full
         
         try:
@@ -318,7 +321,7 @@ class ExcelExporter:
             for col in datetime_cols:
                 if col in dataframe.columns:
                     dataframe[col] = dataframe[col].dt.strftime("%Y-%m-%d")  # 🔹 Format YYYY-MM-DD
-                    print(f"📅 Column '{col}' converted to 'YYYY-MM-DD' format.")
+                    print(f"Column '{col}' converted to 'YYYY-MM-DD' format.")
                 else:
                     print(f"Warning: Column '{col}' does not exist in the DataFrame.")
             return dataframe

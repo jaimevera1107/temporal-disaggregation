@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="temporal-disaggregation",
-    version="0.1.1",
+    version="0.1.5",
     author="Jaime Vera",
     author_email="your-email@example.com",
     description="A Python library for temporal disaggregation of time series data",
